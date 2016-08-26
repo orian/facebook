@@ -61,7 +61,7 @@ func (pr *PagingResult) Decode(v interface{}) (err error) {
 }
 
 // Read previous page.
-func (pr *PagingResult) Previous() (noMore bool, err error) {
+func (pr *PagingResult) Previous() (noMore bool, res Result, err error) {
 	if !pr.HasPrevious() {
 		noMore = true
 		return
@@ -71,7 +71,7 @@ func (pr *PagingResult) Previous() (noMore bool, err error) {
 }
 
 // Read next page.
-func (pr *PagingResult) Next() (noMore bool, err error) {
+func (pr *PagingResult) Next() (noMore bool, res Result, err error) {
 	if !pr.HasNext() {
 		noMore = true
 		return
@@ -90,7 +90,7 @@ func (pr *PagingResult) HasNext() bool {
 	return pr.next != ""
 }
 
-func (pr *PagingResult) navigate(url *string) (noMore bool, err error) {
+func (pr *PagingResult) navigate(url *string) (noMore bool, res Result, err error) {
 	var pagingUrl string
 
 	// add session information in paging url.
@@ -109,7 +109,6 @@ func (pr *PagingResult) navigate(url *string) (noMore bool, err error) {
 	}
 
 	var request *http.Request
-	var res Result
 
 	request, err = http.NewRequest("GET", pagingUrl, nil)
 
@@ -129,7 +128,6 @@ func (pr *PagingResult) navigate(url *string) (noMore bool, err error) {
 	}
 	paging := &pr.paging
 	err = res.Decode(paging)
-
 	if err != nil {
 		return
 	}
